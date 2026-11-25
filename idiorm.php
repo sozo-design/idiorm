@@ -2209,26 +2209,22 @@
         // ---  ArrayAccess  --- //
         // --------------------- //
 
-        #[\ReturnTypeWillChange]
-        public function offsetExists($key) {
+        public function offsetExists(mixed $key): bool {
             return array_key_exists($key, $this->_data);
         }
 
-        #[\ReturnTypeWillChange]
-        public function offsetGet($key) {
+        public function offsetGet(mixed $key): mixed {
             return $this->get($key);
         }
 
-        #[\ReturnTypeWillChange]
-        public function offsetSet($key, $value) {
+        public function offsetSet(mixed $key, mixed $value): void {
             if(is_null($key)) {
                 throw new InvalidArgumentException('You must specify a key/array index.');
             }
             $this->set($key, $value);
         }
 
-        #[\ReturnTypeWillChange]
-        public function offsetUnset($key) {
+        public function offsetUnset(mixed $key): void {
             unset($this->_data[$key]);
             unset($this->_dirty_fields[$key]);
         }
@@ -2406,7 +2402,7 @@
      * @method null setResults(array $results)
      * @method array getResults()
      */
-    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess, Serializable {
+    class IdiormResultSet implements Countable, IteratorAggregate, ArrayAccess {
         /**
          * The current result set as an array
          * @var array
@@ -2449,8 +2445,7 @@
          * Get the number of records in the result set
          * @return int
          */
-        #[\ReturnTypeWillChange]
-        public function count() {
+        public function count(): int {
             return count($this->_results);
         }
 
@@ -2459,8 +2454,7 @@
          * over the result set.
          * @return \ArrayIterator
          */
-        #[\ReturnTypeWillChange]
-        public function getIterator() {
+        public function getIterator(): ArrayIterator {
             return new ArrayIterator($this->_results);
         }
 
@@ -2469,8 +2463,7 @@
          * @param int|string $offset
          * @return bool
          */
-        #[\ReturnTypeWillChange]
-        public function offsetExists($offset) {
+        public function offsetExists(mixed $offset): bool {
             return isset($this->_results[$offset]);
         }
 
@@ -2479,8 +2472,7 @@
          * @param int|string $offset
          * @return mixed
          */
-        #[\ReturnTypeWillChange]
-        public function offsetGet($offset) {
+        public function offsetGet(mixed $offset): mixed {
             return $this->_results[$offset];
         }
         
@@ -2489,8 +2481,7 @@
          * @param int|string $offset
          * @param mixed $value
          */
-        #[\ReturnTypeWillChange]
-        public function offsetSet($offset, $value) {
+        public function offsetSet(mixed $offset, mixed $value): void {
             $this->_results[$offset] = $value;
         }
 
@@ -2498,34 +2489,24 @@
          * ArrayAccess
          * @param int|string $offset
          */
-        #[\ReturnTypeWillChange]
-        public function offsetUnset($offset) {
+        public function offsetUnset(mixed $offset): void {
             unset($this->_results[$offset]);
         }
 
-        public function __serialize() {
-            return $this->serialize();
-        }
-
-        public function __unserialize($data) {
-            $this->unserialize($data);
-        }
-
         /**
-         * Serializable
-         * @return string
-         */
-        public function serialize() {
-            return serialize($this->_results);
-        }
-
-        /**
-         * Serializable
-         * @param string $serialized
+         * Data stored when the result set is serialized
          * @return array
          */
-        public function unserialize($serialized) {
-            return unserialize($serialized);
+        public function __serialize(): array {
+            return array('results' => $this->_results);
+        }
+
+        /**
+         * Restore the result set from serialized data
+         * @param array $data
+         */
+        public function __unserialize(array $data): void {
+            $this->_results = isset($data['results']) ? $data['results'] : array();
         }
 
         /**

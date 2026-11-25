@@ -21,6 +21,15 @@ class IdiormResultSetTest extends \PHPUnit\Framework\TestCase {
         $this->assertIsArray($IdiormResultSet->get_results());
     }
 
+    public function testSerializeAndUnserialize() {
+        $result_set = array('a' => array('id' => 1), 'b' => array('id' => 2));
+        $IdiormResultSet = new IdiormResultSet($result_set);
+        $restored = unserialize(serialize($IdiormResultSet));
+        $this->assertInstanceOf('IdiormResultSet', $restored);
+        $this->assertSame($result_set, $restored->get_results());
+        $this->assertCount(2, $restored);
+    }
+
     public function testConstructor() {
         $result_set = array('item' => new stdClass);
         $IdiormResultSet = new IdiormResultSet($result_set);
