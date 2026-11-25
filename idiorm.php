@@ -535,8 +535,12 @@
             if (empty($parameters)) {
                 $bound_query = $query;
             } else {
-                // Escape the parameters
-                $parameters = array_map(array(self::get_db($connection_name), 'quote'), $parameters);
+                // Escape the parameters. PDO::quote() only takes strings, so
+                // cast first (null becomes '', as it did before PHP 8.1).
+                $db = self::get_db($connection_name);
+                $parameters = array_map(function ($value) use ($db) {
+                    return $db->quote((string) $value);
+                }, $parameters);
 
                 if (array_values($parameters) === $parameters) {
                     // ? placeholders
