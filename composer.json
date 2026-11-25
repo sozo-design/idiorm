@@ -1,12 +1,16 @@
 {
-    "name": "j4mie/idiorm",
+    "name": "sozodesign/idiorm",
     "type": "library",
-    "description": "A lightweight nearly-zero-configuration object-relational mapper and fluent query builder for PHP5",
-    "keywords": ["idiorm", "orm", "query builder"],
-    "homepage": "https://j4mie.github.io/idiormandparis",
+    "description": "SOZO fork of Idiorm for PHP 8.4+: a lightweight nearly-zero-configuration object-relational mapper and fluent query builder",
+    "keywords": [
+        "idiorm",
+        "orm",
+        "query builder"
+    ],
+    "homepage": "https://github.com/sozo-design/idiorm",
     "support": {
-        "issues": "https://github.com/j4mie/idiorm/issues",
-        "source": "https://github.com/j4mie/idiorm"
+        "issues": "https://github.com/sozo-design/idiorm/issues",
+        "source": "https://github.com/sozo-design/idiorm"
     },
     "authors": [
         {
@@ -26,24 +30,38 @@
             "email": "me@durhamhale.com",
             "homepage": "http://durhamhale.com",
             "role": "Maintainer"
+        },
+        {
+            "name": "Clive Walkden",
+            "homepage": "https://sozodesign.co.uk",
+            "role": "Maintainer of the SOZO fork"
         }
     ],
-    "scripts": {
-        "test": "phpunit -c ./phpunit.xml"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8",
-        "ext-pdo_sqlite": "*"
-    },
     "license": [
         "BSD-2-Clause",
         "BSD-3-Clause",
         "BSD-4-Clause"
     ],
     "require": {
-        "php": ">=5.2.0"
+        "php": ">=8.4",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "ext-pdo_sqlite": "*"
+    },
+    "replace": {
+        "j4mie/idiorm": "self.version"
+    },
+    "conflict": {
+        "clivewalkden/idiorm": "*"
     },
     "autoload": {
-        "classmap": ["idiorm.php"]
+        "classmap": [
+            "idiorm.php"
+        ]
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

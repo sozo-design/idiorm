@@ -1,3 +1,33 @@
+Idiorm (SOZO fork)
+==================
+
+This is SOZO Design's fork of [j4mie/idiorm](https://github.com/j4mie/idiorm), published as `sozodesign/idiorm`. Upstream is in maintenance-only mode; this fork keeps it working on current PHP for SOZOcms sites.
+
+Changes from upstream:
+
+- Requires PHP 8.4 or later.
+- PHP 8 deprecations fixed: real return types instead of `#[\ReturnTypeWillChange]`, no `Serializable`, and no `null` passed to internal functions.
+- Serializing an `IdiormResultSet` works again (upstream's `__serialize()` returned a string, which throws on PHP 8).
+- Tests run on PHPUnit 11.
+- The public API is unchanged, and the package replaces `j4mie/idiorm`.
+
+Install it from this repository:
+
+```json
+{
+    "repositories": [
+        {"type": "vcs", "url": "https://github.com/sozo-design/idiorm"}
+    ],
+    "require": {
+        "sozodesign/idiorm": "^2.0"
+    }
+}
+```
+
+The original README follows.
+
+---
+
 Idiorm
 ======
 
