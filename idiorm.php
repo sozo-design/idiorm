@@ -2092,10 +2092,7 @@
             }
 
             $success = self::_execute($query, $values, $this->_connection_name);
-            $caching_auto_clear_enabled = self::$_config[$this->_connection_name]['caching_auto_clear'];
-            if($caching_auto_clear_enabled){
-                self::clear_cache($this->_table_name, $this->_connection_name);
-            }
+            $this->_clear_cache_after_write();
             // If we've just inserted a new record, set the ID of this object
             if ($this->_is_new) {
                 $this->_is_new = false;
@@ -2191,7 +2188,9 @@
                 $this->_quote_identifier($this->_table_name)
             );
             $this->_add_id_column_conditions($query);
-            return self::_execute(join(" ", $query), is_array($this->id(true)) ? array_values($this->id(true)) : array($this->id(true)), $this->_connection_name);
+            $success = self::_execute(join(" ", $query), is_array($this->id(true)) ? array_values($this->id(true)) : array($this->id(true)), $this->_connection_name);
+            $this->_clear_cache_after_write();
+            return $success;
         }
 
         /**
@@ -2206,7 +2205,19 @@
                 $this->_build_where(),
             ));
 
-            return self::_execute($query, $this->_values, $this->_connection_name);
+            $success = self::_execute($query, $this->_values, $this->_connection_name);
+            $this->_clear_cache_after_write();
+            return $success;
+        }
+
+        /**
+         * With caching_auto_clear on, empty this table's query cache after a
+         * write, so a later read in the same request doesn't get the old rows.
+         */
+        protected function _clear_cache_after_write(): void {
+            if (self::$_config[$this->_connection_name]['caching_auto_clear']) {
+                self::clear_cache($this->_table_name, $this->_connection_name);
+            }
         }
 
         // --------------------- //
