@@ -22,6 +22,38 @@ class CacheIntegrationTest extends \PHPUnit\Framework\TestCase {
         ORM::raw_execute('DROP TABLE `league`');
     }
 
+    public function testAutoClearAfterSaveDeleteAndDeleteMany() {
+        ORM::configure('caching_auto_clear', true);
+        try {
+            $this->assertEquals(1, ORM::for_table('league')->where('class_id', 1)->count());
+
+            // save (insert)
+            $new = ORM::for_table('league')->create();
+            $new->class_id = 1;
+            $new->save();
+            $this->assertEquals(2, ORM::for_table('league')->where('class_id', 1)->count());
+
+            // delete()
+            $this->assertEquals(1, ORM::for_table('league')->where('class_id', 2)->count());
+            ORM::for_table('league')->use_id_column('class_id')->find_one(2)->delete();
+            $this->assertEquals(0, ORM::for_table('league')->where('class_id', 2)->count());
+
+            // delete_many()
+            ORM::for_table('league')->where('class_id', 1)->delete_many();
+            $this->assertEquals(0, ORM::for_table('league')->where('class_id', 1)->count());
+        } finally {
+            ORM::configure('caching_auto_clear', false);
+        }
+    }
+
+    public function testWithoutAutoClearTheCacheKeepsOldResults() {
+        $this->assertEquals(1, ORM::for_table('league')->where('class_id', 3)->count());
+        ORM::for_table('league')->where('class_id', 3)->delete_many();
+        // Upstream behaviour kept when auto clear is off.
+        $this->assertEquals(1, ORM::for_table('league')->where('class_id', 3)->count());
+        ORM::clear_cache();
+    }
+
     public function testRegressionForPullRequest319() {
         $rs = ORM::for_table('league')->where('class_id', 1);
         $total = $rs->count();

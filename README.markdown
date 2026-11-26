@@ -8,6 +8,7 @@ Changes from upstream:
 - Requires PHP 8.4 or later.
 - PHP 8 deprecations fixed: real return types instead of `#[\ReturnTypeWillChange]`, no `Serializable`, and no `null` passed to internal functions.
 - Serializing an `IdiormResultSet` works again (upstream's `__serialize()` returned a string, which throws on PHP 8).
+- With `caching_auto_clear` on, `delete()` and `delete_many()` clear the table's query cache as `save()` does (upstream only cleared it on save, so a read after a delete could return the deleted row). Since 2.0.1.
 - Tests run on PHPUnit 11.
 - The public API is unchanged, and the package replaces `j4mie/idiorm`.
 
